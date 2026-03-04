@@ -1,0 +1,71 @@
+# Google Earth Engine Configuration
+gee:
+  # Authenticate with service account JSON key file
+  credentials_path: "${GEE_CREDENTIALS}"
+  project: "air-quality-monitoring-uzbekistan"
+
+# Study Area - Uzbekistan
+study_area:
+  # Uzbekistan bounding box: [west, south, east, north]
+  bounds: [55.93, 37.14, 73.50, 45.61]
+  region_name: "uzbekistan"
+  
+  # Coordinates for major cities
+  cities:
+    tashkent: [69.2075, 41.2995]
+    samarkand: [67.1021, 39.6549]
+    bukhara: [64.4161, 39.7747]
+    andijan: [72.6437, 40.7339]
+    fergana: [71.7553, 40.3818]
+
+# Air Quality Datasets
+datasets:
+  sentinel5p:
+    collection: "COPERNICUS/S5P/NRTI_L3_NO2"
+    band: "NO2_column_number_density"
+    description: "Sentinel-5P Nitrogen Dioxide"
+    
+  tropomi:
+    collection: "COPERNICUS/S5P/NRTI_L3_CO"
+    band: "CO_column_number_density"
+    description: "Copernicus CO measurements"
+    
+  modis_aod:
+    collection: "MODIS/061/MOD09GA"
+    bands: ["sur_refl_b01", "sur_refl_b04"]
+    description: "MODIS Aerosol Optical Depth"
+    
+  era5:
+    collection: "ECMWF/ERA5_LAND/MONTHLY"
+    variables: ["temperature_2m", "u_component_of_wind_10m", "v_component_of_wind_10m"]
+    description: "ERA5 meteorological data"
+
+# Processing Parameters
+processing:
+  start_date: "2023-01-01"
+  end_date: "2024-12-31"
+  scale: 1000  # Output scale in meters
+  max_pixels: 1e9
+  
+# Export Settings
+export:
+  format: "GeoTIFF"
+  bucket: "air-quality-uzbekistan-data"
+  folder_prefix: "air_quality_monitoring"
+
+# Visualization Parameters
+visualization:
+  no2:
+    min: 0
+    max: 2e16
+    palette: ["black", "blue", "purple", "red"]
+    
+  co:
+    min: 0
+    max: 2e18
+    palette: ["black", "green", "yellow", "red"]
+    
+  aod:
+    min: 0
+    max: 0.5
+    palette: ["white", "yellow", "orange", "red"]
