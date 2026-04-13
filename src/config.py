@@ -80,9 +80,15 @@ class ConfigManager:
     def get_bounds(self):
         """Get study area bounds [west, south, east, north]"""
         bounds = self.get('study_area.bounds')
-        if bounds:
+        if not bounds:
+            return None
+        # Import ee lazily to avoid NameError if ee isn't installed
+        try:
+            import ee  # noqa: WPS433
             return ee.Geometry.Rectangle(bounds, 'EPSG:4326')
-        return None
+        except Exception:
+            logger.warning("Returning raw bounds as ee is unavailable")
+            return bounds
     
     def get_datasets(self):
         """Get available air quality datasets"""

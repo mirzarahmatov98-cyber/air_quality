@@ -36,7 +36,7 @@ class GEEAuthenticator:
             )
         
         if not Path(self.credentials_path).exists():
-            raise FileNotFoundError(
+            raise ValueError(
                 f"Credentials file not found: {self.credentials_path}"
             )
     
@@ -53,14 +53,13 @@ class GEEAuthenticator:
         try:
             logger.info(f"Authenticating with GEE using credentials: {self.credentials_path}")
             
-            # Load service account credentials
+            # For ee.ServiceAccountCredentials, pass service account email and key file path
             with open(self.credentials_path, 'r') as f:
                 service_account_info = json.load(f)
-            
-            # Create credentials from service account info
+
             credentials = ee.ServiceAccountCredentials(
-                email=service_account_info['client_email'],
-                key_data=service_account_info['private_key']
+                service_account_info['client_email'],
+                self.credentials_path
             )
             
             # Initialize Earth Engine with credentials
