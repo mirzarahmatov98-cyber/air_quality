@@ -1,0 +1,2 @@
+Date,PM 2.5(µg/m³)_mean,PM 2.5(µg/m³)_std,PM 2.5(µg/m³)_min,PM 2.5(µg/m³)_max,PM 2.5(µg/m³)_count,PM 10(µg/m³)_mean,PM 10(µg/m³)_std,PM 10(µg/m³)_min,PM 10(µg/m³)_max,PM 10(µg/m³)_count,Temperature(°C)_mean,Temperature(°C)_min,Temperature(°C)_max,Humidity(%)_mean,Humidity(%)_min,Humidity(%)_max,Pressure(hPa)_mean
+2026-04-12,19.04,5.62,10.04,28.41,300,40.15,14.63,20.81,64.88,300,19.97,12.03,23.95,47.88,37.9,70.27,962.67
