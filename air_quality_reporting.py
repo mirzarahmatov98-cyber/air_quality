@@ -114,7 +114,7 @@ class AirQualityAnalyzer:
         df = self.df.copy()
         
         # Add time components
-        df['Date'] = df['Time'].dt.date
+        df['Date'] = df['Time'].dt.normalize()  # Datetime at 00:00:00 instead of date object
         df['Week'] = df['Time'].dt.isocalendar().week
         df['Year'] = df['Time'].dt.year
         df['Month'] = df['Time'].dt.month
@@ -266,7 +266,9 @@ class AirQualityAnalyzer:
         
         # PM2.5 daily trend
         daily = self.daily_stats.copy()
-        daily['Date'] = pd.to_datetime(daily['Date'])
+        # Date is already datetime from calculate_statistics, just ensure it's in correct format
+        if not pd.api.types.is_datetime64_any_dtype(daily['Date']):
+            daily['Date'] = pd.to_datetime(daily['Date'])
         
         pm25_mean_col = next((col for col in daily.columns if 'PM 2' in col and 'mean' in col), None)
         pm25_min_col = next((col for col in daily.columns if 'PM 2' in col and 'min' in col), None)
@@ -284,8 +286,10 @@ class AirQualityAnalyzer:
         axes[0].set_title('Daily PM 2.5 Trend', fontsize=14, fontweight='bold')
         axes[0].legend(loc='upper left')
         axes[0].grid(True, alpha=0.3)
+        # Use AutoDateFormatter for better date handling
+        axes[0].xaxis.set_major_locator(mdates.AutoDateLocator())
         axes[0].xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
-        plt.setp(axes[0].xaxis.get_majorticklabels(), rotation=45)
+        plt.setp(axes[0].xaxis.get_majorticklabels(), rotation=45, ha='right')
         
         # PM10 daily trend
         pm10_mean_col = next((col for col in daily.columns if 'PM 10' in col and 'mean' in col), None)
@@ -305,8 +309,10 @@ class AirQualityAnalyzer:
         axes[1].set_title('Daily PM 10 Trend', fontsize=14, fontweight='bold')
         axes[1].legend(loc='upper left')
         axes[1].grid(True, alpha=0.3)
+        # Use AutoDateFormatter for better date handling
+        axes[1].xaxis.set_major_locator(mdates.AutoDateLocator())
         axes[1].xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m-%d'))
-        plt.setp(axes[1].xaxis.get_majorticklabels(), rotation=45)
+        plt.setp(axes[1].xaxis.get_majorticklabels(), rotation=45, ha='right')
         
         plt.tight_layout()
         
