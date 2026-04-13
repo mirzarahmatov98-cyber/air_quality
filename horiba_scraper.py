@@ -74,31 +74,38 @@ try:
         print("No table found in the response!")
         exit(1)
     
-    # Extract headers
+    # Extract headers from THEAD
     headers = []
-    header_row = table.find('tr')
-    if header_row:
-        for th in header_row.find_all('th'):
-            headers.append(th.get_text(strip=True))
+    thead = table.find('thead')
+    if thead:
+        header_row = thead.find('tr')
+        if header_row:
+            for th in header_row.find_all('th'):
+                headers.append(th.get_text(strip=True))
     
     if not headers:
-        # Try td tags if th is not available
-        for td in header_row.find_all('td'):
-            headers.append(td.get_text(strip=True))
+        print("No headers found!")
+        exit(1)
     
     print(f"\nFound {len(headers)} columns")
     print(f"Columns: {headers}")
     
-    # Extract table rows
+    # Extract rows - the table seems to have data spread across multiple rows
+    # Each "row" (TR) might contain multiple records (repeating column groups)
     rows = []
-    all_tr = table.find_all('tr')
-    for tr in all_tr[1:]:  # Skip header row
-        cols = []
-        for td in tr.find_all('td'):
-            cols.append(td.get_text(strip=True))
-        # Only add if we have the right number of columns
-        if len(cols) == len(headers):
-            rows.append(cols)
+    all_trs = table.find_all('tr')[1:]  # Skip header row
+    
+    for tr in all_trs:
+        cols = [td.get_text(strip=True) for td in tr.find_all('td')]
+        if cols:
+            # If we have more columns than headers, we need to split the record
+            num_records = len(cols) // len(headers)
+            if num_records > 0:
+                for record_idx in range(num_records):
+                    start_idx = record_idx * len(headers)
+                    end_idx = start_idx + len(headers)
+                    if end_idx <= len(cols):
+                        rows.append(cols[start_idx:end_idx])
     
     print(f"Extracted {len(rows)} data rows")
     
